@@ -3,6 +3,7 @@ import sys
 sys.path.append("")
 
 from micropython import const
+from motor_speed import MotorSpeed
 
 import uasyncio as asyncio
 import aioble
@@ -11,6 +12,7 @@ import machine
 
 import struct
 import os
+import json
 
 # Randomly generated UUIDs.
 _RC_SERVICE_UUID = bluetooth.UUID("f85fadf7-00bd-4063-9168-4da8d5232ed1")
@@ -24,8 +26,10 @@ rc_service = aioble.Service(_RC_SERVICE_UUID)
 control_characteristic = aioble.Characteristic(rc_service, _CONTROL_CHARACTERISTIC_UUID, write=True)
 
 aioble.register_services(rc_service)
+aioble.core.ble.gatts_set_buffer(control_characteristic._value_handle, 512)
 
 led = machine.Pin(2, machine.Pin.OUT)
+speed_motor = MotorSpeed()
 
 
 async def control_task(connection):
@@ -35,9 +39,10 @@ async def control_task(connection):
                 print("Waiting for write")
                 await control_characteristic.written()
                 msg = control_characteristic.read()
-                control_characteristic.write(b"")
+                # control_characteristic.write(b"")
 
-                print(f'msg: {msg}')
+                payload = msg.decode('utf-8')
+                print(f'payload: {payload}')
 
     except aioble.DeviceDisconnectedError:
         return

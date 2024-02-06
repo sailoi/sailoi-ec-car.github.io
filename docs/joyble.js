@@ -20,7 +20,9 @@ $(document).ready(function($) {
         const now = +new Date();
         if (activeCharacteristic && now - latestControlSingal > 100) { // 0.2 second
             latestControlSingal = now;
-            activeCharacteristic.writeValue(encoder.encode(JSON.stringify(stickData)));
+            let payload = JSON.stringify(stickData);
+            console.log(payload);
+            activeCharacteristic.writeValue(encoder.encode(payload));
         }
     });
 
