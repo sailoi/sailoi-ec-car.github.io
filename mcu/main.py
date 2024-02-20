@@ -32,6 +32,24 @@ led = machine.Pin(2, machine.Pin.OUT)
 speed_motor = MotorSpeed()
 
 
+def set_speed_n_direction(payload):
+    # control speed and direction
+    yai = int(payload["y"])
+
+    if yai == 0:
+        action = speed_motor.stop()
+    elif yai > 0:
+        action = speed_motor.forward(yai)
+    else:
+        action = speed_motor.backward(abs(yai))
+
+
+def set_turns(payload):
+    # control turns
+    # TODO: integrate servo motors
+    pass
+
+
 async def control_task(connection):
     try:
         with connection.timeout(None):
@@ -43,6 +61,13 @@ async def control_task(connection):
 
                 payload = msg.decode('utf-8')
                 print(f'payload: {payload}')
+
+                try:
+                    payload_obj = json.loads(payload)
+                    set_speed_n_direction(payload_obj)
+                    set_turns(payload_obj)
+                except Exception as e:
+                    print(f'error: {e}')
 
     except aioble.DeviceDisconnectedError:
         return
