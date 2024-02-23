@@ -18,13 +18,34 @@ $(document).ready(function($) {
         joy1Y.value = stickData.y;
 
         const now = +new Date();
-        if (activeCharacteristic && now - latestControlSingal > 100) { // 0.2 second
-            latestControlSingal = now;
-            let payload = JSON.stringify(stickData);
-            console.log(payload);
-            activeCharacteristic.writeValue(encoder.encode(payload));
+        if (activeCharacteristic) {
+            if ((stickData.x == "0" && stickData.y == "0")
+                || now - latestControlSingal > 100) { // 0.1 second
+                latestControlSingal = now;
+                let payload = JSON.stringify(stickData);
+                console.log(payload);
+                let encodedPayload = encoder.encode(payload);
+
+                activeCharacteristic.writeValue(encodedPayload).catch(() =>  {
+                    backoff_retry_ble_payload(activeCharacteristic, encodedPayload, 1);
+                });
+            }
         }
     });
+
+    function backoff_retry_ble_payload(activeCharacteristic, encodedPayload, retry_count) {
+        if (retry_count >= 3) {
+            console.log("maxing out retry");
+        } else {
+            setTimeout(() => {
+                console.log("resending payload");
+                activeCharacteristic.writeValue(encodedPayload).catch(() =>  {
+                    console.log("-> DOMException: GATT operation already in progress.");
+                    backoff_retry_ble_payload(activeCharacteristic, encodedPayload, retry_count + 1);
+                });
+            }, 100 * retry_count);
+        }
+    }
 
     function connect_ble_off() {
         $('#connect-ble').bootstrapToggle('off');

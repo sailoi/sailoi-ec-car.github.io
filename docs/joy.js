@@ -206,9 +206,11 @@ var JoyStick = (function(container, parameters, callback)
         // Set attribute of callback
         StickStatus.xPosition = movedX;
         StickStatus.yPosition = movedY;
-        StickStatus.x = (100*((movedX - centerX)/maxMoveStick)).toFixed();
-        StickStatus.y = ((100*((movedY - centerY)/maxMoveStick))*-1).toFixed();
+        StickStatus.x = "0";
+        StickStatus.y = "0";
         StickStatus.cardinalDirection = getCardinalDirection();
+
+        console.log('stopped');
         callback(StickStatus);
     }
 
@@ -259,7 +261,7 @@ var JoyStick = (function(container, parameters, callback)
     {
         pressed = 0;
         clearInterval(pressedInterval);
-        
+
         // If required reset position store variable
         if(autoReturnToCenter)
         {
@@ -275,9 +277,11 @@ var JoyStick = (function(container, parameters, callback)
         // Set attribute of callback
         StickStatus.xPosition = movedX;
         StickStatus.yPosition = movedY;
-        StickStatus.x = (100*((movedX - centerX)/maxMoveStick)).toFixed();
-        StickStatus.y = ((100*((movedY - centerY)/maxMoveStick))*-1).toFixed();
+        StickStatus.x = "0";
+        StickStatus.y = "0";
         StickStatus.cardinalDirection = getCardinalDirection();
+
+        console.log('stopped');
         callback(StickStatus);
     }
 

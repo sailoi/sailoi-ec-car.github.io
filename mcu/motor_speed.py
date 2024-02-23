@@ -1,6 +1,8 @@
 from machine import UART
 from machine import Pin, PWM
 
+import time
+
 frequency = 15000
 min_duty = 100
 max_duty = 1023
@@ -22,11 +24,15 @@ class MotorSpeed:
         else:
             self.enable_pin = PWM(Pin(14), frequency)
 
+        self.last_driven = time.time()
+
     def forward(self, speed):
         self.speed = speed
         self.enable_pin.duty(self.duty_cycle(self.speed))
         self.pin1.value(1)
         self.pin2.value(0)
+
+        self.last_driven = time.time()
 
     def backward(self, speed):
         self.speed = speed
@@ -34,10 +40,14 @@ class MotorSpeed:
         self.pin1.value(0)
         self.pin2.value(1)
 
+        self.last_driven = time.time()
+
     def stop(self):
         self.enable_pin.duty(0)
         self.pin1.value(0)
         self.pin2.value(0)
+
+        self.last_driven = time.time()
 
     def duty_cycle(self, speed):
         if self.speed <= 0 or self.speed > 100:
@@ -46,3 +56,10 @@ class MotorSpeed:
             duty_cycle = int(min_duty + (max_duty - min_duty)*((self.speed - 1)/(100 - 1)))
 
         return duty_cycle
+
+    def check_missing_signal(self):
+        now = time.time()
+
+        if now - self.last_driven >= 0.5 and (self.pin2.value() != 0 and self.pin1.value() != 0):
+            print('stopping for no driving signal')
+            self.stop()

@@ -95,9 +95,14 @@ async def peripheral_task():
         await connection.disconnected()
 
 
+async def speed_motor_task():
+    while True:
+        await asyncio.sleep(.2)
+        speed_motor.check_missing_signal()
+
+
 # Run both tasks.
 async def main():
-    await peripheral_task()
-
+    await asyncio.gather(peripheral_task(), speed_motor_task())
 
 asyncio.run(main())
