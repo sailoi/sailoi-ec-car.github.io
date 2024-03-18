@@ -4,6 +4,7 @@ sys.path.append("")
 
 from micropython import const
 from motor_speed import MotorSpeed
+from motor_turn import MotorTurn
 
 import uasyncio as asyncio
 import aioble
@@ -30,7 +31,10 @@ aioble.core.ble.gatts_set_buffer(control_characteristic._value_handle, 512)
 
 led = machine.Pin(2, machine.Pin.OUT)
 speed_motor = MotorSpeed()
+turn_motor = MotorTurn()
 
+TURN_RANGE = 30
+TURN_BASE = 50
 
 def set_speed_n_direction(payload):
     # control speed and direction
@@ -46,8 +50,11 @@ def set_speed_n_direction(payload):
 
 def set_turns(payload):
     # control turns
-    # TODO: integrate servo motors
-    pass
+    xai = int(payload["x"])
+
+    # fitting +-100 to +-30
+    diff = int(xai * .3)
+    turn_motor.move(TURN_BASE + diff)
 
 
 async def control_task(connection):
@@ -79,6 +86,8 @@ async def peripheral_task():
     while True:
         print("Waiting for connection")
         led.on()
+        # center the turns
+        turn_motor.move(TURN_BASE)
 
         connection = await aioble.advertise(
             _ADV_INTERVAL_US,
