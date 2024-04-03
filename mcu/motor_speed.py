@@ -7,7 +7,9 @@ frequency = 15000
 min_duty = 100
 max_duty = 1023
 
-class MotorSpeed:      
+class MotorSpeed:
+    # these defaults work for the standard L298N
+    # borrowed from the post here at: https://randomnerdtutorials.com/esp32-dc-motor-l298n-motor-driver-control-speed-direction/
     def __init__(self, pin1=None, pin2=None, enable_pin=None):
         if pin1:
             self.pin1 = pin1

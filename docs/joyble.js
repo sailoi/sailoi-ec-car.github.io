@@ -106,7 +106,7 @@ $(document).ready(function($) {
             .catch(error => {
                 // not connected. backing off
                 connect_ble_off();
-                console.error(error); 
+                console.log(error);
             });
         }
     });

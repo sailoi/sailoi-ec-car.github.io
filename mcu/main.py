@@ -5,6 +5,7 @@ sys.path.append("")
 from micropython import const
 from motor_speed import MotorSpeed
 from motor_turn import MotorTurn
+from logger import get_logger
 
 import uasyncio as asyncio
 import aioble
@@ -14,6 +15,9 @@ import machine
 import struct
 import os
 import json
+
+logger = get_logger()
+logger.print("newly booting")
 
 # Randomly generated UUIDs.
 _RC_SERVICE_UUID = bluetooth.UUID("f85fadf7-00bd-4063-9168-4da8d5232ed1")
@@ -57,24 +61,31 @@ def set_turns(payload):
     turn_motor.move(TURN_BASE + diff)
 
 
+def coding_move_forward(seconds, turn_degree):
+    pass
+
+
+def coding_move_backward(seconds, turn_degree):
+    pass
+
+
 async def control_task(connection):
     try:
         with connection.timeout(None):
             while True:
-                print("Waiting for write")
                 await control_characteristic.written()
                 msg = control_characteristic.read()
                 # control_characteristic.write(b"")
 
                 payload = msg.decode('utf-8')
-                print(f'payload: {payload}')
+                # logger.print(f'payload: {payload}')
 
                 try:
                     payload_obj = json.loads(payload)
                     set_speed_n_direction(payload_obj)
                     set_turns(payload_obj)
                 except Exception as e:
-                    print(f'error: {e}')
+                    logger.print('BLE connection error', e)
 
     except aioble.DeviceDisconnectedError:
         return
@@ -84,7 +95,7 @@ async def control_task(connection):
 # connected.
 async def peripheral_task():
     while True:
-        print("Waiting for connection")
+        logger.print("Waiting for connection")
         led.on()
         # center the turns
         turn_motor.move(TURN_BASE)
@@ -99,7 +110,7 @@ async def peripheral_task():
         )
 
         led.off()
-        print("Connection from", connection.device)
+        logger.print("Connection from", connection.device)
         await control_task(connection)
         await connection.disconnected()
 
