@@ -1,9 +1,19 @@
-<!DOCTYPE HTML>
-<html data-bs-theme="dark">
+<!DOCTYPE html>
+<html lang="en">
    <head>
-      <title>Sailoi Labs RC Car Web Bluetooh Demo</title>
+      <meta http-equiv="content-type" content="text/html; charset=UTF-8">
       <meta charset="utf-8">
-      <meta name="description" content="Sailoi RC Car Web Bluetooh Demo">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <meta name="description" content="">
+      <meta name="author" content="">
+      <link rel="icon" href="https://getbootstrap.com/docs/4.0/assets/img/favicons/favicon.ico">
+      <meta name="description" content="Sailoi Labs RC Car BLE Controller">
+      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+      <title>Sailoi Labs RC Car BLE Controller</title>
+      <!-- Bootstrap core CSS -->
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+      <!-- Custom styles for this template -->
+      <link href="/cover.css" rel="stylesheet">
       <link rel="icon" type="image/x-icon" href="/favicon.ico">
       <style>
          *
@@ -37,99 +47,115 @@
          }
          #joy1Div
          {
-         width:200px;
-         height:200px;
-         margin:50px
+         width:100px;
+         height:100px;
+         margin:25px
+         }
+         .btn-circle.btn-xl {
+         width: 60px;
+         height: 60px;
+         padding: 13px 18px;
+         border-radius: 60px;
+         font-size: 18px;
+         text-align: center;
+         }
+         .modal-header {
+         color: black;
+         }
+         .modal-body {
+         color: black;
+         }
+         .modal-body a {
+         color: blue;
          }
       </style>
       <script src="/joy.js"></script>
-
-      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
    </head>
-   <body class="d-flex h-100 text-center text-bg-dark">
-      <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-         <header class="mb-auto">
-            <div>
-               <h3 class="float-md-start mb-0">Sailoi Labs</h3>
+   <body class="text-center">
+      <div class="cover-container d-flex h-100 p-3 mx-auto flex-column">
+         <header class="masthead mb-auto">
+            <div class="inner">
+               <h3 class="masthead-brand">Sailoi RC Car Controller</h3>
+               <nav class="nav nav-masthead justify-content-center">
+                  <a class="nav-link active" href="#">Controller</a>
+                  <a class="nav-link" href="#">Programming</a>
+                  <a class="nav-link" href="#">Demo</a>
+                  <a class="nav-link" href="#">Buy</a>
+               </nav>
             </div>
          </header>
-         <p></p>
-         <p></p>
-         <p></p>
-         <main class="px-3">
-            <h1>Sailoi RC Car Controller</h1>
-            <p class="lead">Use the joystick below to control your RC car via bluetooth.</p>
+         <main role="main" class="inner cover">
+            <p class="lead"></p>
             <div class="columnLateral">
-                <input type="checkbox" data-toggle="toggle" data-on="car connected" data-off="click to connect car" data-onstyle="primary" data-offstyle="warning" id="connect-ble" />
-
-               <div id="joy1Div" style="width:200px;height:200px;"></div>
-
-               <table class="table">
+               <input type="checkbox" data-toggle="toggle" data-on="car connected" data-off="connect car" data-size="small" data-onstyle="primary" data-offstyle="warning" id="connect-ble" />
+               <p>&nbsp;</p>
+               <table class="table" id="jobTable">
                   <tbody>
-                    <tr>
-                      <th scope="row">Posizione X</th>
-                      <th scope="row"><input id="joy1PosizioneX" type="text" /></th>
-                    </tr>
-
-                    <tr>
-                      <th scope="row">Posizione Y</th>
-                      <th scope="row"><input id="joy1PosizioneY" type="text" /></th>
-                    </tr>
-
-                    <tr>
-                      <th scope="row">Direzione Y</th>
-                      <th scope="row"><input id="joy1Direzione" type="text" /></th>
-                    </tr>
-
-                    <tr>
-                      <th scope="row">X</th>
-                      <th scope="row"><input id="joy1X" type="text" /></th>
-                    </tr>
-
-                    <tr>
-                      <th scope="row">Y</th>
-                      <th scope="row"><input id="joy1Y" type="text" /></th>
-                    </tr>
+                     <tr>
+                        <th scope="row">Posizione X</th>
+                        <th scope="row"><input id="joy1PosizioneX" type="text" /></th>
+                     </tr>
+                     <tr>
+                        <th scope="row">Posizione Y</th>
+                        <th scope="row"><input id="joy1PosizioneY" type="text" /></th>
+                     </tr>
+                     <tr>
+                        <th scope="row">Direzione Y</th>
+                        <th scope="row"><input id="joy1Direzione" type="text" /></th>
+                     </tr>
+                     <tr>
+                        <th scope="row">X</th>
+                        <th scope="row"><input id="joy1X" type="text" /></th>
+                     </tr>
+                     <tr>
+                        <th scope="row">Y</th>
+                        <th scope="row"><input id="joy1Y" type="text" /></th>
+                     </tr>
                   </tbody>
-                </table>
-            </div>
-            <div class="modal" tabindex="-1" role="dialog" id="no-bluetooth">
-              <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title">Your browser does not support Web Bluetooth</h5>
-                  </div>
-                  <div class="modal-body">
-                    <p>On android devices, please </p>
-
-                    <p>On iOS devices, download and use <a target="_blank" href="https://apps.apple.com/us/app/bluefy-web-ble-browser/id1492822055">Bluefy – Web BLE Browser</a> to view this page.</p>
-
-                    <p>On a Mac or PC, please refer to </p>
-                  </div>
-                  <div class="modal-footer">
-                    <button id="no-bluetooth-dismiss" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                  </div>
-                </div>
-              </div>
+               </table>
             </div>
          </main>
-         <p></p>
-         <p></p>
-         <p></p>
-         <footer class="mt-auto text-white-50">
-            <p>Created with <a href="https://getbootstrap.com/" class="text-white">Bootstrap</a>, <a href="https://github.com/bobboteck/JoyStick/tree/master" class="text-white">JoyStick</a>, by <a href="https://sailoi.square.site/" class="text-white">@Sailoi Labs</a>.</p>
+         <div class="container">
+            <div class="row">
+               <div class="col align-self-start">
+                  <div id="joy1Div" style="width:100px;height:100px;"></div>
+               </div>
+               <div class="col align-self-center">
+                  <button type="button" class="btn btn-success btn-circle btn-xl">↑</button>            
+               </div>
+               <div class="col align-self-end">
+                  <button type="button" class="btn btn-danger btn-circle btn-xl">↓</button>
+               </div>
+            </div>
+         </div>
+         <div class="modal" tabindex="-1" role="dialog" id="no-bluetooth">
+            <div class="modal-dialog" role="document">
+               <div class="modal-content">
+                  <div class="modal-header">
+                     <h5 class="modal-title">The browser does not support Web Bluetooth</h5>
+                  </div>
+                  <div class="modal-body">
+                     <p>On android devices, please </p>
+                     <p>On iOS devices, download and use <a target="_blank" href="https://apps.apple.com/us/app/bluefy-web-ble-browser/id1492822055">Bluefy – Web BLE Browser</a> to view this page.</p>
+                     <p>On a Mac or PC, please refer to </p>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <footer class="mastfoot mt-auto">
+            <div class="inner">
+               <p>Created with <a href="https://getbootstrap.com/" class="text-white">Bootstrap</a>, <a href="https://github.com/bobboteck/JoyStick/tree/master" class="text-white">JoyStick</a>, by <a href="https://sailoi.square.site/" class="text-white">@Sailoi Labs</a>.</p>
+            </div>
          </footer>
       </div>
-
       <script
-              src="https://code.jquery.com/jquery-3.7.1.js"
-              integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
-              crossorigin="anonymous"></script>
+         src="https://code.jquery.com/jquery-3.7.1.js"
+         integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+         crossorigin="anonymous"></script>
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-
       <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
       <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
-
-      <script src="/joyble.js"></script>
+      <script src="/joyble.js?25442"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>  
    </body>
 </html>

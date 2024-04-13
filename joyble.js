@@ -1,4 +1,6 @@
 $(document).ready(function($) {
+    $("#jobTable").hide();
+
     const encoder = new TextEncoder('utf-8');
     let activeCharacteristic;
     let latestControlSingal = +new Date();
@@ -62,10 +64,8 @@ $(document).ready(function($) {
     // Check if browser supports Web Bluetooth API.
     if (navigator.bluetooth == undefined) {
         $('#no-bluetooth').modal('toggle');
-
-        $('#no-bluetooth-dismiss').on( "click", function() {
-          $('#no-bluetooth').modal('toggle');
-        });
+        connect_ble_off();
+        $('#connect-ble').bootstrapToggle('disable');
         return;
     }
 
