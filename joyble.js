@@ -27,6 +27,14 @@ $(document).ready(function($) {
         controlPayload.x = stickData.x;
     });
 
+    // disable mobile selection code
+    document.getElementById('joy1Div').oncontextmenu = function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        return false;
+    };
+
     function sendControls() {
         const now = +new Date();
 
@@ -86,6 +94,22 @@ $(document).ready(function($) {
     // Check if the device support the touch or not
     let forward = document.getElementById("forward");
     let backward = document.getElementById("backward");
+
+    // disable mobile selection code
+    forward.oncontextmenu = function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        return false;
+    };
+
+    // disable mobile selection code
+    backward.oncontextmenu = function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        return false;
+    };
 
     if("ontouchstart" in document.documentElement)
     {
