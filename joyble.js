@@ -46,10 +46,10 @@ $(document).ready(function($) {
                 // long pressing longer than 2 secs, go full speed
                 controlPayload.y = direction * 100;
             } else {
-                controlPayload.y = direction * 70;
+                controlPayload.y = direction * 85;
             }
         } else {
-            controlPayload.y = direction * 70;
+            controlPayload.y = direction * 85;
         }
 
         if (activeCharacteristic) {
