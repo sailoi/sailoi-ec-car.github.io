@@ -210,7 +210,6 @@ var JoyStick = (function(container, parameters, callback)
         StickStatus.y = "0";
         StickStatus.cardinalDirection = getCardinalDirection();
 
-        console.log('stopped');
         callback(StickStatus);
     }
 
@@ -281,7 +280,6 @@ var JoyStick = (function(container, parameters, callback)
         StickStatus.y = "0";
         StickStatus.cardinalDirection = getCardinalDirection();
 
-        console.log('stopped');
         callback(StickStatus);
     }
 

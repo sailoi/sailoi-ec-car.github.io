@@ -1,5 +1,5 @@
 $(document).ready(function($) {
-    $("#jobTable").hide();
+    $("#joyTable").hide();
 
     const encoder = new TextEncoder('utf-8');
     let activeCharacteristic;
@@ -10,6 +10,10 @@ $(document).ready(function($) {
     let joy1Direzione = document.getElementById("joy1Direzione");
     let joy1X = document.getElementById("joy1X");
     let joy1Y = document.getElementById("joy1Y");
+
+    let controlPayload = {x: 0, y: 0};
+    let speedPressedTime = null;
+    let direction = 0;
          
     // Create JoyStick object into the DIV 'joy1Div'
     let Joy1 = new JoyStick('joy1Div', {}, function(stickData) {
@@ -19,36 +23,92 @@ $(document).ready(function($) {
         joy1X.value = stickData.x;
         joy1Y.value = stickData.y;
 
+        // only update the turn controls
+        controlPayload.x = stickData.x;
+    });
+
+    function sendControls() {
         const now = +new Date();
+
+        // calculate the speed and direction
+        if (speedPressedTime != null) {
+            var dif = Math.abs(now - speedPressedTime) / 1000;
+
+            if (dif > 2) {
+                // long pressing longer than 2 secs, go full speed
+                controlPayload.y = direction * 100;
+            } else {
+                controlPayload.y = direction * 70;
+            }
+        } else {
+            controlPayload.y = direction * 70;
+        }
+
         if (activeCharacteristic) {
-            if ((stickData.x == "0" && stickData.y == "0")
-                || now - latestControlSingal > 100) { // 0.1 second
+            if (now - latestControlSingal > 100) { // 0.1 second
                 latestControlSingal = now;
-                let payload = JSON.stringify(stickData);
-                console.log(payload);
+                let payload = JSON.stringify(controlPayload);
+                // console.log(payload);
                 let encodedPayload = encoder.encode(payload);
 
-                activeCharacteristic.writeValue(encodedPayload).catch(() =>  {
-                    backoff_retry_ble_payload(activeCharacteristic, encodedPayload, 1);
+                activeCharacteristic.writeValue(encodedPayload).catch((e) =>  {
+                    console.error("not able to send control over");
+                    console.error(e);
                 });
             }
         }
-    });
 
-    function backoff_retry_ble_payload(activeCharacteristic, encodedPayload, retry_count) {
-        if (retry_count >= 3) {
-            console.log("maxing out retry");
-        } else {
-            setTimeout(() => {
-                console.log("resending payload");
-                activeCharacteristic.writeValue(encodedPayload).catch(() =>  {
-                    console.log("-> DOMException: GATT operation already in progress.");
-                    backoff_retry_ble_payload(activeCharacteristic, encodedPayload, retry_count + 1);
-                });
-            }, 100 * retry_count);
-        }
+        // schedule for the next control delivery
+        setTimeout(() => {
+            sendControls();
+        }, 200);
     }
 
+    function onforward(event) {
+        console.log('forward');
+        direction = 1;
+        speedPressedTime = +new Date();
+    }
+
+    function onbackward(event) {
+        console.log('backward');
+        direction = -1;
+        speedPressedTime = +new Date();
+    }
+
+    function onstop(event) {
+        console.log('stopped');
+        direction = 0;
+        speedPressedTime = null;
+    }
+
+    // configure forward and backward
+    // Check if the device support the touch or not
+    let forward = document.getElementById("forward");
+    let backward = document.getElementById("backward");
+
+    if("ontouchstart" in document.documentElement)
+    {
+        forward.addEventListener("touchstart", onforward, false);
+        backward.addEventListener("touchstart", onbackward, false);
+
+        forward.addEventListener("touchend", onstop, false);
+        backward.addEventListener("touchend", onstop, false);
+    }
+    else
+    {
+        forward.addEventListener("mousedown", onforward, false);
+        backward.addEventListener("mousedown", onbackward, false);
+
+        forward.addEventListener("mouseup", onstop, false);
+        backward.addEventListener("mouseup", onstop, false);
+    }
+
+    // disable contextmenu because long press on muse will trigger the mose right button
+    document.addEventListener('contextmenu', event => event.preventDefault());
+
+
+    // BLE related code
     function connect_ble_off() {
         $('#connect-ble').bootstrapToggle('off');
     }
@@ -87,6 +147,9 @@ $(document).ready(function($) {
                         device.gatt.disconnect();
                     }
                 });
+
+                // start the control signal sending
+                sendControls();
 
                 return device.gatt.connect();
             })
