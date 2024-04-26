@@ -13,7 +13,7 @@
       <!-- Bootstrap core CSS -->
       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
       <!-- Custom styles for this template -->
-      <link href="/cover.css" rel="stylesheet">
+      <link href="/cover.css?v=2024041601" rel="stylesheet">
       <link rel="icon" type="image/x-icon" href="/favicon.ico">
       <style>
          *
@@ -73,7 +73,7 @@
          color: blue;
          }
       </style>
-      <script src="/joy.js?v=213"></script>
+      <script src="/joy.js?v=2024042002"></script>
    </head>
    <body class="text-center">
       <div class="cover-container d-flex h-100 p-3 mx-auto flex-column">
@@ -81,57 +81,66 @@
             <div class="inner">
                <h3 class="masthead-brand">Sailoi RC Car Controller</h3>
                <nav class="nav nav-masthead justify-content-center">
-                  <a class="nav-link active" href="#">Controller</a>
-                  <a class="nav-link" href="#">Programming</a>
-                  <a class="nav-link" href="#">Demo</a>
-                  <a class="nav-link" href="#">Buy</a>
+                  <a class="nav-link active" id="Controller" href="#">Controller</a>
+                  <a class="nav-link" id="Programming" href="#">Programming</a>
+                  <a class="nav-link" target="_blank" href="https://www.youtube.com/channel/UCJ8AjPImvrFFsjy8dLUWAUw">Demo</a>
+                  <a class="nav-link" target="_blank" href="https://www.etsy.com/shop/SailoiLabs">Buy</a>
                </nav>
             </div>
          </header>
          <main role="main" class="inner cover">
-            <p class="lead"></p>
-            <div class="columnLateral">
-               <input type="checkbox" data-toggle="toggle" data-on="car connected" data-off="connect car" data-size="small" data-onstyle="primary" data-offstyle="warning" id="connect-ble" />
-               <p>&nbsp;</p>
-               <table class="table" id="joyTable">
-                  <tbody>
-                     <tr>
-                        <th scope="row">Posizione X</th>
-                        <th scope="row"><input id="joy1PosizioneX" type="text" /></th>
-                     </tr>
-                     <tr>
-                        <th scope="row">Posizione Y</th>
-                        <th scope="row"><input id="joy1PosizioneY" type="text" /></th>
-                     </tr>
-                     <tr>
-                        <th scope="row">Direzione Y</th>
-                        <th scope="row"><input id="joy1Direzione" type="text" /></th>
-                     </tr>
-                     <tr>
-                        <th scope="row">X</th>
-                        <th scope="row"><input id="joy1X" type="text" /></th>
-                     </tr>
-                     <tr>
-                        <th scope="row">Y</th>
-                        <th scope="row"><input id="joy1Y" type="text" /></th>
-                     </tr>
-                  </tbody>
-               </table>
+               <p class="lead"></p>
+               <div class="columnLateral">
+                  <input type="checkbox" data-toggle="toggle" data-on="car connected" data-off="connect car" data-size="small" data-onstyle="primary" data-offstyle="warning" id="connect-ble" />
+                  <p>&nbsp;</p>
+               </div>
+            </main>
+            <div id="controller-div" class="container">
+               <div class="row">
+                  <div class="col align-self-start">
+                     <div id="joy1Div" style="width:100px;height:100px;"></div>
+                  </div>
+                  <table class="table" id="joyTable">
+                     <tbody>
+                        <tr>
+                           <th scope="row">Posizione X</th>
+                           <th scope="row"><input id="joy1PosizioneX" type="text" /></th>
+                        </tr>
+                        <tr>
+                           <th scope="row">Posizione Y</th>
+                           <th scope="row"><input id="joy1PosizioneY" type="text" /></th>
+                        </tr>
+                        <tr>
+                           <th scope="row">Direzione Y</th>
+                           <th scope="row"><input id="joy1Direzione" type="text" /></th>
+                        </tr>
+                        <tr>
+                           <th scope="row">X</th>
+                           <th scope="row"><input id="joy1X" type="text" /></th>
+                        </tr>
+                        <tr>
+                           <th scope="row">Y</th>
+                           <th scope="row"><input id="joy1Y" type="text" /></th>
+                        </tr>
+                     </tbody>
+                  </table>
+                  <div class="col align-self-center">
+                     <button id="forward" type="button" class="btn btn-success btn-circle btn-xl">↑</button>            
+                  </div>
+                  <div class="col align-self-end">
+                     <button id="backward" type="button" class="btn btn-danger btn-circle btn-xl">↓</button>
+                  </div>
+               </div>
             </div>
-         </main>
-         <div class="container">
-            <div class="row">
-               <div class="col align-self-start">
-                  <div id="joy1Div" style="width:100px;height:100px;"></div>
-               </div>
-               <div class="col align-self-center">
-                  <button id="forward" type="button" class="btn btn-success btn-circle btn-xl">↑</button>            
-               </div>
-               <div class="col align-self-end">
-                  <button id="backward" type="button" class="btn btn-danger btn-circle btn-xl">↓</button>
+            <div id="programming-div" class="container">
+               <p>
+                  <button type="button" id="sync_code" class="btn btn-primary btn-sm">Sync Code</button>
+                  <button type="button" id="execute_code" class="btn btn-success btn-sm">Execute!</button>
+               </p>
+               <div class="centered">
+                  <div id="blocklyDiv" style="height: 800px; width: 600px;"></div>
                </div>
             </div>
-         </div>
          <div class="modal" tabindex="-1" role="dialog" id="no-bluetooth">
             <div class="modal-dialog" role="document">
                <div class="modal-content">
@@ -148,7 +157,7 @@
          </div>
          <footer class="mastfoot mt-auto">
             <div class="inner">
-               <p>Created with <a href="https://getbootstrap.com/" class="text-white">Bootstrap</a>, <a href="https://github.com/bobboteck/JoyStick" class="text-white">JoyStick</a>, by <a href="https://sailoi.square.site/" class="text-white">@Sailoi Labs</a>.</p>
+               <p>Created with <a href="https://getbootstrap.com/" class="text-white">Bootstrap</a>, <a href="https://github.com/bobboteck/JoyStick" class="text-white">JoyStick</a>, <a href="https://developers.google.com/blockly/" class="text-white">blockly</a>, by <a href="https://sailoi.square.site/" class="text-white">@Sailoi Labs</a>.</p>
             </div>
          </footer>
       </div>
@@ -159,7 +168,20 @@
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
       <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
       <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
-      <script src="/joyble.js?v=2024041302"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>  
+
+      <!-- Load Blockly core -->
+      <script src="https://unpkg.com/blockly/blockly_compressed.js"></script>
+      <!-- Load the default blocks -->
+      <script src="https://unpkg.com/blockly/blocks_compressed.js"></script>
+      <!-- Load a generator -->
+      <script src="https://unpkg.com/blockly/javascript_compressed.js"></script>
+      <!-- Load a message file -->
+      <script src="https://unpkg.com/blockly/msg/en.js"></script>
+      <!-- Load python code gen -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/blockly/11.0.0-beta.6/python_compressed.min.js" integrity="sha512-+luIjgIwj0hI+GT5eib5zfXhIz9+xYEi6G0y3fCWwm8fmVB7S/QeN9e3XWzyqiEbgJlnP7OZmFjwF0mkg/lDCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@blockly/theme-dark@3.0.14/dist/index.js"></script>
+
+      <script src="/joyble.js?v=2024042520"></script>
    </body>
 </html>

@@ -15,6 +15,7 @@ import machine
 import struct
 import os
 import json
+import time
 
 logger = get_logger()
 logger.print("newly booting")
@@ -28,7 +29,7 @@ _ADV_INTERVAL_US = const(250000)
 
 # Register GATT server.
 rc_service = aioble.Service(_RC_SERVICE_UUID)
-control_characteristic = aioble.Characteristic(rc_service, _CONTROL_CHARACTERISTIC_UUID, write=True)
+control_characteristic = aioble.Characteristic(rc_service, _CONTROL_CHARACTERISTIC_UUID, read=True, write=True, notify=True)
 
 aioble.register_services(rc_service)
 aioble.core.ble.gatts_set_buffer(control_characteristic._value_handle, 512)
@@ -37,55 +38,78 @@ led = machine.Pin(2, machine.Pin.OUT)
 speed_motor = MotorSpeed()
 turn_motor = MotorTurn()
 
-TURN_RANGE = 30
 TURN_BASE = 50
+
 
 def set_speed_n_direction(payload):
     # control speed and direction
     yai = int(payload["y"])
 
     if yai == 0:
-        action = speed_motor.stop()
+        speed_motor.stop()
     elif yai > 0:
-        action = speed_motor.forward(yai)
+        speed_motor.forward(yai)
     else:
-        action = speed_motor.backward(abs(yai))
+        speed_motor.backward(abs(yai))
+
+
+def _get_turn_degree(xai):
+    # fitting +-100 to +-30
+    return TURN_BASE + int(xai * .3)
 
 
 def set_turns(payload):
     # control turns
     xai = int(payload["x"])
-
-    # fitting +-100 to +-30
-    diff = int(xai * .3)
-    turn_motor.move(TURN_BASE + diff)
+    turn_motor.move(_get_turn_degree(xai))
 
 
 def coding_move_forward(seconds, turn_degree):
-    pass
+    turn_motor.move(_get_turn_degree(turn_degree))
+    speed_motor.forward(150)
+    time.sleep(seconds)
 
 
 def coding_move_backward(seconds, turn_degree):
-    pass
+    turn_motor.move(_get_turn_degree(turn_degree))
+    speed_motor.backward(150)
+    time.sleep(seconds)
 
 
 async def control_task(connection):
     try:
+        program_code = None
+
         with connection.timeout(None):
             while True:
                 await control_characteristic.written()
                 msg = control_characteristic.read()
-                # control_characteristic.write(b"")
 
                 payload = msg.decode('utf-8')
                 # logger.print(f'payload: {payload}')
 
                 try:
                     payload_obj = json.loads(payload)
-                    set_speed_n_direction(payload_obj)
-                    set_turns(payload_obj)
+
+                    if 'code' in payload_obj:
+                        program_code = payload_obj['code']
+                        logger.print(f'code synced:\n{program_code}')
+
+                    elif 'execute' in payload_obj:
+                        exec(program_code)
+                        logger.print(f'code executed')
+                        control_characteristic.notify(connection, b'exe_done')
+                        # control_characteristic.write(b'exe_done')
+
+                    elif 'msg' in payload_obj:
+                        logger.print(f'message payload', payload)
+
+                    else:
+                        set_speed_n_direction(payload_obj)
+                        set_turns(payload_obj)
+
                 except Exception as e:
-                    logger.print('BLE connection error', e)
+                    logger.print('error controling the car', e, payload)
 
     except aioble.DeviceDisconnectedError:
         return
