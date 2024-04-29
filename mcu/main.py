@@ -20,7 +20,6 @@ import time
 logger = get_logger()
 logger.print("newly booting")
 
-# Randomly generated UUIDs.
 _RC_SERVICE_UUID = bluetooth.UUID("f85fadf7-00bd-4063-9168-4da8d5232ed1")
 _CONTROL_CHARACTERISTIC_UUID = bluetooth.UUID("5c322ef5-5421-4eef-81e9-70be45807310")
 
@@ -126,7 +125,7 @@ async def peripheral_task():
 
         connection = await aioble.advertise(
             _ADV_INTERVAL_US,
-            name='sailoi-labs-rc-car',
+            name='sailoi-rc-car',
             services=[_RC_SERVICE_UUID],
             # 963 = Joystick at org.bluetooth.characteristic.gap.appearance.xml
             appearance=963,

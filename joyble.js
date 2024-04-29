@@ -234,7 +234,10 @@ $(document).ready(function($) {
         if(this.checked) {
             //start to connect to the car
             navigator.bluetooth.requestDevice({ 
-                "filters":[{"namePrefix":"sailoi"}],
+                "filters":[
+                    {"name":"MPY ESP32"},
+                    {"name":"sailoi-rc-car"},
+                ],
                 "optionalServices": ['f85fadf7-00bd-4063-9168-4da8d5232ed1']
             })
             .then(device => {
@@ -290,11 +293,6 @@ $(document).ready(function($) {
         $('#programming-div').show();
 
         if (programmingInitialized != true) {
-            // getting notification data back from the car
-            // activeCharacteristic.startNotifications();
-            // activeCharacteristic.addEventListener('characteristicvaluechanged', handleCharacteristicValueChanged);
-            // console.log('Notifications have been started.');
-
             Blockly.Theme.defineTheme('dark', {
               base: Blockly.Themes.Classic,
               componentStyles: {
