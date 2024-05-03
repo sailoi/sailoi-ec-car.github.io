@@ -314,19 +314,17 @@ $(document).ready(function($) {
             Blockly.defineBlocksWithJsonArray([
               {
                 'type': 'move_forward',
-                'message0': 'move forward for %1 secs\nwith %2 turn degree',
+                'message0': 'move forward for %1 secs\nwith %2 percent of turn',
                 'args0': [
                   {
-                    'type': 'field_number',
+                    'type': 'input_value',
                     'name': 'seconds',
-                    "min": 0,
-                    "max": 10,
+                    "check": "Number",
                   },
                   {
-                    'type': 'field_number',
-                    'name': 'turn_degree',
-                    "min": -100,
-                    "max": 100,
+                    'type': 'input_value',
+                    'name': 'turn_percentage',
+                    "check": "Number",
                   },
                 ],
                 'previousStatement': null,
@@ -334,19 +332,17 @@ $(document).ready(function($) {
               },
               {
                 'type': 'move_backward',
-                'message0': 'move backward for %1 secs\nwith %2 turn degree',
+                'message0': 'move backward for %1 secs\nwith %2 percent of turn',
                 'args0': [
                   {
-                    'type': 'field_number',
+                    'type': 'input_value',
                     'name': 'seconds',
-                    "min": 0,
-                    "max": 10,
+                    "check": "Number",
                   },
                   {
-                    'type': 'field_number',
-                    'name': 'turn_degree',
-                    "min": -100,
-                    "max": 100,
+                    'type': 'input_value',
+                    'name': 'turn_percentage',
+                    "check": "Number",
                   },
                 ],
                 'previousStatement': null,
@@ -356,15 +352,15 @@ $(document).ready(function($) {
 
             // define the code gens
             Blockly.Python.forBlock['move_forward'] = function(block, generator) {
-                let seconds = block.getFieldValue('seconds');
-                let turn_degree = block.getFieldValue('turn_degree');
-                return "".concat(...["coding_move_forward(", seconds, ", ", turn_degree, ")", "\n"]);
+                let seconds = generator.valueToCode(block, 'seconds', Blockly.JavaScript.ORDER_ATOMIC);
+                let turn_percentage = generator.valueToCode(block, 'turn_percentage', Blockly.JavaScript.ORDER_ATOMIC);
+                return "".concat(...["coding_move_forward(", seconds, ", ", turn_percentage, ")", "\n"]);
             };
 
             Blockly.Python.forBlock['move_backward'] = function(block, generator) {
-                let seconds = block.getFieldValue('seconds');
-                let turn_degree = block.getFieldValue('turn_degree');
-                return "".concat(...["coding_move_backward(", seconds, ", ", turn_degree, ")", "\n"]);
+                let seconds = generator.valueToCode(block, 'seconds', Blockly.JavaScript.ORDER_ATOMIC);
+                let turn_percentage = generator.valueToCode(block, 'turn_percentage', Blockly.JavaScript.ORDER_ATOMIC);
+                return "".concat(...["coding_move_backward(", seconds, ", ", turn_percentage, ")", "\n"]);
             };
 
             const toolbox = {

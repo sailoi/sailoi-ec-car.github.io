@@ -38,6 +38,7 @@ speed_motor = MotorSpeed()
 turn_motor = MotorTurn()
 
 TURN_BASE = 50
+EXECUTING_PROGRAM = False
 
 
 def set_speed_n_direction(payload):
@@ -52,10 +53,28 @@ def set_speed_n_direction(payload):
         speed_motor.backward(abs(yai))
 
 
+def _get_scanitized_secs(seconds):
+    sanitized_seconds = int(seconds)
+    sanitized_seconds = min(10, sanitized_seconds)
+    sanitized_seconds = max(0, sanitized_seconds)
+    return sanitized_seconds
+
+
+def _get_scanitized_turn_percentage(turn_percentage):
+    sanitized_turn_percentage = int(turn_percentage)
+
+    if sanitized_turn_percentage < -100:
+        sanitized_turn_percentage = -100
+
+    if sanitized_turn_percentage > 100:
+        sanitized_turn_percentage = 100
+        
+    return sanitized_turn_percentage
+
+
 def _get_turn_degree(xai):
     # fitting +-100 to +-30
     return TURN_BASE + int(xai * .3)
-
 
 def set_turns(payload):
     # control turns
@@ -63,16 +82,21 @@ def set_turns(payload):
     turn_motor.move(_get_turn_degree(xai))
 
 
-def coding_move_forward(seconds, turn_degree):
-    turn_motor.move(_get_turn_degree(turn_degree))
-    speed_motor.forward(150)
-    time.sleep(seconds)
+def reset_car_movements():
+    speed_motor.stop()
+    turn_motor.move(0)
 
 
-def coding_move_backward(seconds, turn_degree):
-    turn_motor.move(_get_turn_degree(turn_degree))
-    speed_motor.backward(150)
-    time.sleep(seconds)
+def coding_move_forward(seconds, turn_percentage):
+    turn_motor.move(_get_turn_degree(turn_percentage))
+    speed_motor.forward(90)
+    time.sleep(_get_scanitized_secs(seconds))
+
+
+def coding_move_backward(seconds, turn_percentage):
+    turn_motor.move(_get_turn_degree(turn_percentage))
+    speed_motor.backward(90)
+    time.sleep(_get_scanitized_secs(seconds))
 
 
 async def control_task(connection):
@@ -95,8 +119,13 @@ async def control_task(connection):
                         logger.print(f'code synced:\n{program_code}')
 
                     elif 'execute' in payload_obj:
+                        EXECUTING_PROGRAM = True
+
                         exec(program_code)
                         logger.print(f'code executed')
+                        reset_car_movements()
+
+                        EXECUTING_PROGRAM = False
                         control_characteristic.notify(connection, b'exe_done')
                         # control_characteristic.write(b'exe_done')
 
@@ -141,7 +170,9 @@ async def peripheral_task():
 async def speed_motor_task():
     while True:
         await asyncio.sleep(.2)
-        speed_motor.check_missing_signal()
+
+        if not EXECUTING_PROGRAM:
+            speed_motor.check_missing_signal()
 
 
 # Run both tasks.
