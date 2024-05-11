@@ -84,7 +84,7 @@ def set_turns(payload):
 
 def reset_car_movements():
     speed_motor.stop()
-    turn_motor.move(0)
+    turn_motor.move(TURN_BASE)
 
 
 def coding_move_forward(seconds, turn_percentage):
